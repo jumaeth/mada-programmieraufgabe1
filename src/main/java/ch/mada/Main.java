@@ -2,13 +2,9 @@ package ch.mada;
 
 import java.io.*;
 import java.math.BigInteger;
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) throws IOException {
@@ -46,6 +42,16 @@ public class Main {
                 }
             }
         }
+
+        //Inhalt entschlüsseln
+        // System.out.println(new String(encrypted.modPow(d, n).toByteArray(), StandardCharsets.UTF_8));
+
+
+
+
+
+
+
     }
 
     public static BigInteger phiOfn(BigInteger p, BigInteger q) {
@@ -98,22 +104,26 @@ public class Main {
         return y0;
     }
 
-    public static BigInteger encrypt(BigInteger e, int c, BigInteger n) {
+    public static BigInteger encrypt(BigInteger e, int charToEncrypt, BigInteger n) {
+        //Inhalt zu binär
+        String binary = e.toString(2);
+        System.out.println(binary);
+
+
         //Initialisierung
-        byte[] bytesE = e.toByteArray();
-        int i = bytesE.length - 1;
-        BigInteger k = BigInteger.valueOf(c);
+        int i = binary.length() - 1;
+        BigInteger k = BigInteger.valueOf(charToEncrypt);
         BigInteger h = BigInteger.valueOf(1);
 
         //Iteriertes Quadrieren
         while (i >= 0) {
-            if(bytesE[i] == (byte)1) {
+            if(binary.charAt(i) == '1') {
                 h = h.multiply(k).mod(n);
             }
             k = k.pow(2).mod(n);
             i = i - 1;
+            System.out.println("I: " + i + ", k: " + k + ", h: " + h);
         }
-        System.out.println(h);
         return h;
     }
 
