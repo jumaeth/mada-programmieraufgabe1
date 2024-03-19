@@ -1,17 +1,17 @@
 package ch.mada;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Random random = new Random();
         // Generate Random Prime Number
         BigInteger p = BigInteger.valueOf(11);
@@ -32,21 +32,20 @@ public class Main {
         BigInteger d = calculateD(nPHI, e);
         System.out.println("D: " + d);
 
-
-
-        //Inhalt verschlüssel
-        BigInteger encrypted = encrypt(e, "Hello",n);
-        System.out.println("Encrypted: " + encrypted);
-
-        //Inhalt entschlüsseln
-        System.out.println(new String(encrypted.modPow(d, n).toByteArray(), StandardCharsets.UTF_8));
-
-
-
-
-
-
-
+        //Inhalt einlesen
+        Path path = Path.of("src/text.txt");
+        try(Scanner scanner = new Scanner(path);
+            PrintWriter writer = new PrintWriter("src/chiffre.txt", StandardCharsets.UTF_8)) {
+            char[] s;
+            while (scanner.hasNextLine()) {
+                s = scanner.nextLine().toCharArray();
+                System.out.println(s);
+                for(char c : s) {
+                    BigInteger encryptedValue = encrypt(e, c, n);
+                        writer.println(encryptedValue.toString());
+                }
+            }
+        }
     }
 
     public static BigInteger phiOfn(BigInteger p, BigInteger q) {
@@ -99,23 +98,22 @@ public class Main {
         return y0;
     }
 
-    public static BigInteger encrypt(BigInteger e, String x, BigInteger n) {
+    public static BigInteger encrypt(BigInteger e, int c, BigInteger n) {
         //Initialisierung
         byte[] bytesE = e.toByteArray();
         int i = bytesE.length - 1;
-        byte[] byteK = x.getBytes(StandardCharsets.UTF_8);
+        BigInteger k = BigInteger.valueOf(c);
         BigInteger h = BigInteger.valueOf(1);
 
         //Iteriertes Quadrieren
-        BigInteger k = new BigInteger(byteK);
         while (i >= 0) {
-            if(bytesE[i] == 1) {
+            if(bytesE[i] == (byte)1) {
                 h = h.multiply(k).mod(n);
             }
             k = k.pow(2).mod(n);
             i = i - 1;
-            i--;
         }
+        System.out.println(h);
         return h;
     }
 
