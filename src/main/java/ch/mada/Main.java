@@ -8,7 +8,13 @@ import java.util.*;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        Random random = new Random();
+
+        //File Paths
+        Path fileToEncrypt = Path.of("src/text.txt");
+        Path fileToDecrypt = Path.of("src/chiffre.txt");
+
+
+
         // Generate Random Prime Number
         BigInteger p = BigInteger.valueOf(11);
         BigInteger q = BigInteger.valueOf(3);
@@ -29,8 +35,8 @@ public class Main {
         System.out.println("D: " + d);
 
         //Inhalt einlesen
-        Path path = Path.of("src/text.txt");
-        try(Scanner scanner = new Scanner(path);
+
+        try(Scanner scanner = new Scanner(fileToEncrypt);
             PrintWriter writer = new PrintWriter("src/chiffre.txt", StandardCharsets.UTF_8)) {
             char[] s;
             while (scanner.hasNextLine()) {
@@ -45,12 +51,6 @@ public class Main {
 
         //Inhalt entschlüsseln
         // System.out.println(new String(encrypted.modPow(d, n).toByteArray(), StandardCharsets.UTF_8));
-
-
-
-
-
-
 
     }
 
@@ -106,6 +106,7 @@ public class Main {
 
     public static BigInteger encrypt(BigInteger e, int charToEncrypt, BigInteger n) {
         //Inhalt zu binär
+        System.out.println((char) charToEncrypt);
         String binary = e.toString(2);
         System.out.println(binary);
 
