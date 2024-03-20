@@ -30,16 +30,16 @@ public class DecryptHelper {
         return characterList;
     }
 
-    // n, d aus sk File lesen
-    public static BigInteger[] readSkFile() throws FileNotFoundException {
-        BigInteger n;
-        BigInteger d;
-        try(Scanner scanner = new Scanner(new File("src/sk.txt"))) {
+    // b, a aus File auslesen
+    public static BigInteger[] readKeyFile(String locationToKeyFile) throws FileNotFoundException {
+        BigInteger a;
+        BigInteger b;
+        try(Scanner scanner = new Scanner(new File(locationToKeyFile))) {
             String[] sk = scanner.nextLine().split(",");
-            d = new BigInteger(sk[0]);
-            n = new BigInteger(sk[1]);
+            b = new BigInteger(sk[0]);
+            a = new BigInteger(sk[1]);
         }
-        return new BigInteger[]{d, n};
+        return new BigInteger[]{b, a};
     }
 
     // Entschlüsselten Inhalt in Datei schreiben

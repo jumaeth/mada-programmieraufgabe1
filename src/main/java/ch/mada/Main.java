@@ -34,6 +34,11 @@ public class Main {
         BigInteger d = calculateD(nPHI, e);
         System.out.println("D: " + d);
 
+        // n,e in pk File schreiben
+        try (PrintWriter writer = new PrintWriter("src/pk.txt", StandardCharsets.UTF_8)) {
+            writer.print(n + "," + e);
+        }
+
         // d,n in sk File schreiben
         try (PrintWriter writer = new PrintWriter("src/sk.txt", StandardCharsets.UTF_8)) {
             writer.print(d + "," + n);
@@ -50,15 +55,17 @@ public class Main {
                 }
                 characterList.add('\r');
             }
+
+            BigInteger[] en = DecryptHelper.readKeyFile("src/pk.txt");
             for (Character c : characterList) {
                 BigInteger charAsBigInt = BigInteger.valueOf(c);
-                BigInteger encryptedChar = encrypt(e, charAsBigInt, n);
+                BigInteger encryptedChar = encrypt(en[1], charAsBigInt, en[0]);
                 writer.print(encryptedChar + ",");
             }
         }
 
         // Verschlüsselten Inhalt auslesen und entschlüsseln
-        BigInteger[] dn = DecryptHelper.readSkFile();
+        BigInteger[] dn = DecryptHelper.readKeyFile("src/sk.txt");
         List<Character> characterList = DecryptHelper.readAndDecrypt(fileToDecrypt, dn[0], dn[1]);
 
         // Entschlüsselten Inhalt in Datei schreiben
@@ -117,7 +124,6 @@ public class Main {
     }
 
     public static BigInteger encrypt(BigInteger e, BigInteger charToEncrypt, BigInteger n) {
-        //char darf nicht grösser als 32 sein...Fehler
         BigInteger h = charToEncrypt.modPow(e,n);
         System.out.println("Char to encrypt: "+ charToEncrypt);
         System.out.println("Encrypted char: " + h);
