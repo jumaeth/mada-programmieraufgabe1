@@ -55,12 +55,17 @@ public class DecryptHelper {
     public static List<String> saveLinesToList(List<Character> characterList) {
         List<String> lines = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
+        boolean oneline = true;
         for (Character c : characterList) {
             sb.append(c);
             if (c.equals('\r')) {
                 lines.add(sb.toString());
                 sb = new StringBuilder();
+                oneline = false;
             }
+        }
+        if (oneline) {
+            lines.add(sb.toString());
         }
         return lines;
     }
