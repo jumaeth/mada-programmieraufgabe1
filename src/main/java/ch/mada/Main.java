@@ -41,7 +41,7 @@ public class Main {
 
         // d,n in sk File schreiben
         try (PrintWriter writer = new PrintWriter("src/sk.txt", StandardCharsets.UTF_8)) {
-            writer.print(d + "," + n);
+            writer.print(n + "," + d);
         }
 
         //Inhalt einlesen und verschlüsseln
@@ -66,7 +66,7 @@ public class Main {
 
         // Verschlüsselten Inhalt auslesen und entschlüsseln
         BigInteger[] dn = DecryptHelper.readKeyFile("src/sk.txt");
-        List<Character> characterList = DecryptHelper.readAndDecrypt(fileToDecrypt, dn[0], dn[1]);
+        List<Character> characterList = DecryptHelper.readAndDecrypt(fileToDecrypt, dn[1], dn[0]);
 
         // Entschlüsselten Inhalt in Datei schreiben
         List<String> lines = DecryptHelper.saveLinesToList(characterList);
