@@ -13,9 +13,11 @@ public class Main {
         Path fileToEncrypt = Path.of("src/text.txt");
         Path fileToDecrypt = Path.of("src/chiffre.txt");
 
+        Random random = new Random();
+
         // Generate Random Prime Number
-        BigInteger p = BigInteger.valueOf(3);
-        BigInteger q = BigInteger.valueOf(11);
+        BigInteger p = BigInteger.probablePrime(2048, random);
+        BigInteger q = BigInteger.probablePrime(2048, random);
 
         // p und q multiplizieren und n erhalten
         BigInteger n = p.multiply(q);
@@ -35,13 +37,17 @@ public class Main {
         //Inhalt einlesen und verschlüsseln
         try(Scanner scanner = new Scanner(fileToEncrypt);
             PrintWriter writer = new PrintWriter("src/chiffre.txt", StandardCharsets.UTF_8)) {
-            char[] s;
+            List<Character> characterList = new ArrayList<>();
             while (scanner.hasNextLine()) {
-                s = scanner.nextLine().toCharArray();
-                for(char c : s) {
-                    BigInteger encryptedValue = encrypt(e, BigInteger.valueOf(c), n);
-                        writer.println(encryptedValue);
+                char[] chars = scanner.nextLine().toCharArray();
+                for (char c : chars) {
+                    characterList.add(c);
                 }
+            }
+            for (Character c : characterList) {
+                BigInteger charAsBigInt = BigInteger.valueOf(c);
+                BigInteger encryptedChar = encrypt(e, charAsBigInt, n);
+                writer.println(encryptedChar);
             }
         }
 
@@ -53,7 +59,6 @@ public class Main {
                 lineAsValue = new BigInteger(scanner.nextLine());
                 System.out.println("Line as value: " + lineAsValue);
                 BigInteger result = lineAsValue.modPow(d,n);
-                result = result.add(BigInteger.valueOf(97)); //Entschlüsselung und Verschlüsselung funktioniert nur bis char values die kleiner als 32 sind
                 System.out.println("Result char Number: " + result);
                 String s = result.toString();
                 characterList.add((char) Integer.parseInt(s));
@@ -67,8 +72,7 @@ public class Main {
         // (p-1)*(q-1) = PHI von n
         p = p.subtract(BigInteger.ONE);
         q = q.subtract(BigInteger.ONE);
-        BigInteger n = p.multiply(q);
-        return n;
+        return p.multiply(q);
     }
 
     public static BigInteger calculateE (BigInteger nPHI) {
@@ -115,7 +119,6 @@ public class Main {
 
     public static BigInteger encrypt(BigInteger e, BigInteger charToEncrypt, BigInteger n) {
         //char darf nicht grösser als 32 sein...Fehler
-        charToEncrypt = charToEncrypt.subtract(BigInteger.valueOf(97));
         BigInteger h = charToEncrypt.modPow(e,n);
         System.out.println("Char to encrypt: "+ charToEncrypt);
         System.out.println("Encrypted char: " + h);
