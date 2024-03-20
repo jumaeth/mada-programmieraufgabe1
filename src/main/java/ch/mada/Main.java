@@ -41,7 +41,6 @@ public class Main {
             char[] s;
             while (scanner.hasNextLine()) {
                 s = scanner.nextLine().toCharArray();
-                System.out.println(s);
                 for(char c : s) {
                     BigInteger encryptedValue = encrypt(e, c, n);
                         writer.println(encryptedValue.toString());
@@ -64,7 +63,6 @@ public class Main {
     }
 
     public static BigInteger calculateE (BigInteger nPHI) {
-        List<BigInteger> result = new ArrayList<>();
         BigInteger r = generateRandomBigIntBetween(BigInteger.valueOf(0), nPHI.subtract(BigInteger.ONE));
 
 
@@ -106,9 +104,9 @@ public class Main {
 
     public static BigInteger encrypt(BigInteger e, int charToEncrypt, BigInteger n) {
         //Inhalt zu binär
-        System.out.println((char) charToEncrypt);
+        System.out.println("Char to encrypt: "+ (char) charToEncrypt);
         String binary = e.toString(2);
-        System.out.println(binary);
+        System.out.println("Binary Number of e: " + binary);
 
 
         //Initialisierung
@@ -117,6 +115,7 @@ public class Main {
         BigInteger h = BigInteger.valueOf(1);
 
         //Iteriertes Quadrieren
+        System.out.println("Encryption Alorithm");
         while (i >= 0) {
             if(binary.charAt(i) == '1') {
                 h = h.multiply(k).mod(n);
@@ -125,6 +124,7 @@ public class Main {
             i = i - 1;
             System.out.println("I: " + i + ", k: " + k + ", h: " + h);
         }
+        System.out.println("Result encryption: " + h);
         return h;
     }
 
