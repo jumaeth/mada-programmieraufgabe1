@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class CryptorHelper {
+public class DecryptHelper {
     //Verschlüsselter Inhalt auslesen und entschlüsseln
     public static List<Character> readAndDecrypt(Path fileToDecrypt, BigInteger d, BigInteger n) throws IOException {
         List<Character> characterList = new ArrayList<>();

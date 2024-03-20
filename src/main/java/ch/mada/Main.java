@@ -26,7 +26,7 @@ public class Main {
         BigInteger nPHI = phiOfn(p,q);
         System.out.println("PHI von n: " + nPHI);
 
-        //Menge an GGTs von phiOfn
+        //Ein GGT von phiOfn
         BigInteger e = calculateE(nPHI);
         System.out.println("E: " + e);
 
@@ -57,10 +57,13 @@ public class Main {
             }
         }
 
-        BigInteger[] dn = CryptorHelper.readSkFile();
-        List<Character> characterList = CryptorHelper.readAndDecrypt(fileToDecrypt, dn[0], dn[1]);
-        List<String> lines = CryptorHelper.saveLinesToList(characterList);
-        CryptorHelper.saveToFile(lines);
+        // Verschlüsselten Inhalt auslesen und entschlüsseln
+        BigInteger[] dn = DecryptHelper.readSkFile();
+        List<Character> characterList = DecryptHelper.readAndDecrypt(fileToDecrypt, dn[0], dn[1]);
+
+        // Entschlüsselten Inhalt in Datei schreiben
+        List<String> lines = DecryptHelper.saveLinesToList(characterList);
+        DecryptHelper.saveToFile(lines);
     }
 
     public static BigInteger phiOfn(BigInteger p, BigInteger q) {
