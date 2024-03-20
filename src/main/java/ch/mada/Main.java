@@ -16,8 +16,8 @@ public class Main {
 
 
         // Generate Random Prime Number
-        BigInteger p = BigInteger.valueOf(11);
-        BigInteger q = BigInteger.valueOf(3);
+        BigInteger p = BigInteger.valueOf(3);
+        BigInteger q = BigInteger.valueOf(11);
 
         // p und q multiplizieren und n erhalten
         BigInteger n = p.multiply(q);
@@ -34,7 +34,7 @@ public class Main {
         BigInteger d = calculateD(nPHI, e);
         System.out.println("D: " + d);
 
-        //Inhalt einlesen
+        //Inhalt einlesen und verschlüsseln
 
         try(Scanner scanner = new Scanner(fileToEncrypt);
             PrintWriter writer = new PrintWriter("src/chiffre.txt", StandardCharsets.UTF_8)) {
@@ -42,15 +42,28 @@ public class Main {
             while (scanner.hasNextLine()) {
                 s = scanner.nextLine().toCharArray();
                 for(char c : s) {
-                    BigInteger encryptedValue = encrypt(e, c, n);
+                    BigInteger encryptedValue = encrypt(e, BigInteger.valueOf(c), n);
                         writer.println(encryptedValue.toString());
                 }
             }
         }
 
-        //Inhalt entschlüsseln
-        // System.out.println(new String(encrypted.modPow(d, n).toByteArray(), StandardCharsets.UTF_8));
+        //Verschlüsselter Inhalt auslesen und entschlüsseln
 
+        try(Scanner scanner = new Scanner(fileToDecrypt)) {
+            BigInteger lineAsValue;
+            List<Character> characterList = new ArrayList<>();
+            while (scanner.hasNextLine()) {
+                lineAsValue = new BigInteger(scanner.nextLine());
+                System.out.println("Line as value: " + lineAsValue);
+                BigInteger result = lineAsValue.modPow(d,n);
+                result = result.add(BigInteger.valueOf(97)); //Entschlüsselung und Verschlüsselung funktioniert nur bis char values  die kleiner als 32 sind
+                System.out.println("Result char Number: " + result);
+                String s = result.toString();
+                characterList.add((char) Integer.parseInt(s));
+            }
+            System.out.println(characterList);
+        }
     }
 
     public static BigInteger phiOfn(BigInteger p, BigInteger q) {
@@ -99,32 +112,19 @@ public class Main {
             x1 = temporaryX;
             y1 = temporaryY;
         }
+        if(y0.compareTo(BigInteger.ZERO) <= 0) {
+            y0 = y0.add(nPHI);
+        }
+        System.out.println("e*d mod phi(n): " + (e.multiply(y0)).mod(nPHI));
         return y0;
     }
 
-    public static BigInteger encrypt(BigInteger e, int charToEncrypt, BigInteger n) {
-        //Inhalt zu binär
-        System.out.println("Char to encrypt: "+ (char) charToEncrypt);
-        String binary = e.toString(2);
-        System.out.println("Binary Number of e: " + binary);
-
-
-        //Initialisierung
-        int i = binary.length() - 1;
-        BigInteger k = BigInteger.valueOf(charToEncrypt);
-        BigInteger h = BigInteger.valueOf(1);
-
-        //Iteriertes Quadrieren
-        System.out.println("Encryption Alorithm");
-        while (i >= 0) {
-            if(binary.charAt(i) == '1') {
-                h = h.multiply(k).mod(n);
-            }
-            k = k.pow(2).mod(n);
-            i = i - 1;
-            System.out.println("I: " + i + ", k: " + k + ", h: " + h);
-        }
-        System.out.println("Result encryption: " + h);
+    public static BigInteger encrypt(BigInteger e, BigInteger charToEncrypt, BigInteger n) {
+        //char darf nicht grösser als 32 sein...Fehler
+        charToEncrypt = charToEncrypt.subtract(BigInteger.valueOf(97));
+        BigInteger h = charToEncrypt.modPow(e,n);
+        System.out.println("Char to encrypt: "+ charToEncrypt);
+        System.out.println("Encrypted char: " + h);
         return h;
     }
 
