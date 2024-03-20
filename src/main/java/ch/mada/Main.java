@@ -13,8 +13,6 @@ public class Main {
         Path fileToEncrypt = Path.of("src/text.txt");
         Path fileToDecrypt = Path.of("src/chiffre.txt");
 
-
-
         // Generate Random Prime Number
         BigInteger p = BigInteger.valueOf(3);
         BigInteger q = BigInteger.valueOf(11);
@@ -35,7 +33,6 @@ public class Main {
         System.out.println("D: " + d);
 
         //Inhalt einlesen und verschlüsseln
-
         try(Scanner scanner = new Scanner(fileToEncrypt);
             PrintWriter writer = new PrintWriter("src/chiffre.txt", StandardCharsets.UTF_8)) {
             char[] s;
@@ -43,13 +40,12 @@ public class Main {
                 s = scanner.nextLine().toCharArray();
                 for(char c : s) {
                     BigInteger encryptedValue = encrypt(e, BigInteger.valueOf(c), n);
-                        writer.println(encryptedValue.toString());
+                        writer.println(encryptedValue);
                 }
             }
         }
 
         //Verschlüsselter Inhalt auslesen und entschlüsseln
-
         try(Scanner scanner = new Scanner(fileToDecrypt)) {
             BigInteger lineAsValue;
             List<Character> characterList = new ArrayList<>();
@@ -57,7 +53,7 @@ public class Main {
                 lineAsValue = new BigInteger(scanner.nextLine());
                 System.out.println("Line as value: " + lineAsValue);
                 BigInteger result = lineAsValue.modPow(d,n);
-                result = result.add(BigInteger.valueOf(97)); //Entschlüsselung und Verschlüsselung funktioniert nur bis char values  die kleiner als 32 sind
+                result = result.add(BigInteger.valueOf(97)); //Entschlüsselung und Verschlüsselung funktioniert nur bis char values die kleiner als 32 sind
                 System.out.println("Result char Number: " + result);
                 String s = result.toString();
                 characterList.add((char) Integer.parseInt(s));
@@ -76,18 +72,16 @@ public class Main {
     }
 
     public static BigInteger calculateE (BigInteger nPHI) {
-        BigInteger r = generateRandomBigIntBetween(BigInteger.valueOf(0), nPHI.subtract(BigInteger.ONE));
+        BigInteger random = generateRandomBigIntBetween(BigInteger.valueOf(0), nPHI.subtract(BigInteger.ONE));
 
-
-        while (!nPHI.equals(r)) {
-            if (nPHI.gcd(r).equals(BigInteger.valueOf(1))) {
-                return r;
+        while (!nPHI.equals(random)) {
+            if (nPHI.gcd(random).equals(BigInteger.valueOf(1))) {
+                return random;
             }
-            r = r.add(BigInteger.ONE);
+            random = random.add(BigInteger.ONE);
         }
         return BigInteger.valueOf(-1);
     }
-
 
     //Erweiterter Euklidischer Algorithmus
     public static BigInteger calculateD(BigInteger nPHI, BigInteger e) {
