@@ -124,8 +124,23 @@ public class Main {
     }
 
     public static BigInteger encrypt(BigInteger e, BigInteger charToEncrypt, BigInteger n) {
-        BigInteger h = charToEncrypt.modPow(e,n);
         System.out.println("Char to encrypt: "+ charToEncrypt);
+        //Inhalt zu binär
+        String binary = e.toString(2);
+
+        //Initialisierung
+        int i = binary.length() - 1;
+        BigInteger k = charToEncrypt;
+        BigInteger h = BigInteger.ONE;
+
+        //Iteriertes Quadrieren
+        while (i >= 0) {
+            if(binary.charAt(i) == '1') {
+                h = h.multiply(k).mod(n);
+            }
+            k = k.pow(2).mod(n);
+            i = i - 1;
+        }
         System.out.println("Encrypted char: " + h);
         return h;
     }
